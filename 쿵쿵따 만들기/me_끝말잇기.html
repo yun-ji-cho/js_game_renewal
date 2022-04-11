@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+</head>
+<body>
+  <h1>쿵쿵따 게임 만들기</h1>
+  <p>끝말잇기 게임을 응용해 쿵쿵따 게임을 만든다.</p>
+  <p>단어는 3글자, 3글자가 아니면 다시 입력하라고 표시한다.</p>
+  <p>prompt 함수를 사용해 몇명이 참가할지를 선택할때 사용자가 취소를 누르면 다음 코드가 실행 되지 않도록 처리하기</p>
+  <p>힌트 : 사용자가 input 이벤트를 발생시킬 때 입력한 글자가 세글자인지 확인한다.</p>
+
+  <button type="button" onclick="gameStart()">게임시작</button>
+
+  <script>
+    function gameStart(){
+      let userCount = prompt('몇 명이 참가하나요?');
+      const number = +userCount;
+      console.log(number);
+      if(userCount == null){
+        return;
+      }else{
+        if(!number && userCount !== ''){
+          alert('숫자만 입력 가능합니다.');
+          gameStart();
+          return;
+        }
+        if(userCount === ''){
+          alert('참가 인원을 숫자로 입력해주세요.');
+          gameStart();
+          return;
+        }
+
+        alert(userCount + '명이 쿵쿵따 게임을 시작합니다.');
+        let suggestionWord = prompt('제시어를 입력해주세요.');
+
+        while(suggestionWord === '' || suggestionWord.length !== 3 ){ //인풋에 값이 없으면 계속 반복
+          alert('올바른 제시어를 입력해주세요!');
+          suggestionWord = prompt('제시어를 입력해주세요.');
+        }
+        
+          //반복 함수
+          let newWord = prompt( suggestionWord + ' 쿵쿵따!');
+          let i = 0;
+          let result = function(){
+            if(newWord.length === 3 && newWord.charAt(0) === suggestionWord.charAt(2) ){
+              suggestionWord = newWord;
+              i++;
+              if(i === number){
+                alert('게임종료');
+              }else{
+                newWord = prompt(i +'번 :'+ suggestionWord + ' 쿵쿵따!', '');
+              }
+            }else{
+              alert('틀렸습니다.');
+              if(i === 0){
+                newWord = prompt( suggestionWord + ' 쿵쿵따!');
+              }else{
+                newWord = prompt(i +'번 :'+ suggestionWord + ' 쿵쿵따!', '');
+              }
+            }
+          }
+        
+        while(i < number){
+          result();
+        }
+        
+      }
+    }
+
+
+  </script>
+  
+</body>
+</html>

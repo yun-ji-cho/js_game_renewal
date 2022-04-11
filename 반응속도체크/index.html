@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #screen{
+      width:300px;
+      height:200px;
+      text-align: center;
+      user-select : none;
+    }
+    #screen.waiting{
+      background-color: aqua;
+    }
+    #screen.ready{
+      background-color: red;
+    }
+    #screen.now{
+      background-color: greenyellow;
+    }
+  </style>
+</head>
+<body>
+  <div id="screen" class="waiting">클릭해서 시작하세요!</div>
+  <div id="result"></div>
+  <script>
+    //데이터와 화면 변경은 항상 묶어주는 것(가까운 곳에 위치)이 좋다.
+    const $screen = document.querySelector('#screen');
+    const $result = document.querySelector('#result');
+    const $ranking = document.querySelector('#ranking');
+    let status = 'waiting';
+    let changeTime;
+    let timer;
+    let date;
+    
+    const responseCheck = (e) => {
+      date = new Date();
+
+      if($screen.classList.contains('waiting')){
+        $screen.className = 'ready';
+        status = 'ready';
+        const randomSecond = (Math.random())* 5000;
+        timer = setTimeout(changeNow, randomSecond);
+        
+      } else if($screen.classList.contains('ready')){
+        alert('성급했어요, 아직입니다.');
+        $screen.className = 'waiting';
+        status = 'waiting';
+        clearTimeout(timer);
+      } else if($screen.classList.contains('now')){
+        const clickTime = date.getTime();
+        const diff = clickTime - changeTime;
+        $result.textContent = `반응속도는 ${diff}ms 입니다.`
+
+        //selfcheck 가장 빠른 상위 5개 보여주기 
+        const rank = records.slice().sort((a, b) => a - b).slice(0,5);
+        console.log(rank);
+        $ranking.textContent = rank;
+      }
+    }
+
+    const changeNow = function(){
+      $screen.className = 'now';
+      status = 'now';
+      changeTime = date.getTime();
+      console.log(changeTime);
+    }
+
+
+    $screen.addEventListener('click', responseCheck);
+
+
+
+  </script>
+</body>
+</html>

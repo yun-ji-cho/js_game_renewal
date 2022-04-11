@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <!-- <script>
+    //forEach
+    const answer = [3,1,4,6];
+    const value = '3124';
+    let strike = 0;
+    let ball = 0;
+
+    answer.forEach((elem, i) => {
+      const index = value.indexOf(elem);
+      console.log(index);
+      if(index > -1){ //일치하는 숫자 발견
+        if(index === i){ //자리수도 같음
+          strike += 1;
+        }else{
+          ball += 1; //숫자만 같음
+        }
+      }
+    })
+  </script> -->
+  <!-- <script>
+    //map (원본 배열을 손상시키지 않는다.)
+    var array = [1,2,3,4];
+    var newArray = array.map((elem, i) => {
+       return elem* 2;
+    });
+
+    console.log(newArray); //[2, 4, 6, 8]
+  </script> -->
+  <script>
+    const array = Array(9);
+    console.log(array); // [empty × 9] -> 빈 배열이 생성된다.
+    array.fill();
+    console.log(array); //[undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined] : fill() 괄호 안에 있는 값으로 값이 채워진다.
+    const newArray = array.fill().map((elem, idx)=>{
+      return idx+1;
+    })
+    console.log(newArray); //[1, 2, 3, 4, 5, 6, 7, 8, 9]
+  </script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    table{
+      border-collapse: collapse;
+    }
+    td{
+      border:1px solid black;
+      width:40px;
+      height:40px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>이차원 배열 다루기 - 틱택토 게임</h1>
+  <p>틱택토 게임은 오목의 축소판인 삼목이다. 삼목은 바둑판이 아니라 3*3 표 위에서 진행한다. 표와 같은 삼목 데이터는 자바스크립트에서 이차원 배열로 표현한다. 틱택토를 만들면서 이차원 배열로 데이터를 관리하고 배열 데이터를 HTML 화면에 그대로 표시하는 작업을 집중적으로 배워보자.
+  </p>
+  <h2>순서도 그리기</h2>
+  <p>바둑에 검은 돌과 흰 돌이 있듯이 틱택토에는 o 과 x 가 있다. 틱택토 순서도를 그려보자</p>
+
+  <div id="container">
+
+  </div>
+  <script>
+    //객체안의 속성와 변수이름이 같을때 줄여서 쓸 수 있다. (구조분해할당)
+    //구조분해 할당을 쓰면 안돌아 가는 애들도 있다 (ex. this 를 사용할 경우)
+    const { body } = document; //const body = document.body;
+    const $table = document.createElement('table');
+    const $result = document.createElement('div');
+    const $container = document.querySelector('#container');
+    
+    let turn = 'O';
+    const rows = [];
+    // arr = [
+    //   [$td, $td, $td],
+    //   [$td, $td, $td],
+    //   [$td, $td, $td],
+    // ]
+    // 위와 같이 배열에 html 요소를 넣으면 arr[0][1].textContent 이런식으로 몇번째 줄 몇번째 칸인지 찾기 쉽고 데이터 안에 html 태그가 들어있어서 편하게 화면을 조작할 수 있게 됨.
+
+    //승자 판단하기
+    //td 는 자체적으로 cellIndex를 갖고 있다. tr 도 rowIndex 알고있음
+    const checkWinner = (target) => {
+      //내가 몇번째 줄 몇번째 칸인지 판단하기
+      const rowIndex = target.parentNode.rowIndex;
+      const cellIndex = target.cellIndex;
+
+      let hasWinner = false;
+      //가로줄 검사
+      if(
+        rows[rowIndex][0].textContent === turn &&
+        rows[rowIndex][1].textContent === turn &&
+        rows[rowIndex][2].textContent === turn
+      ){
+        hasWinner = true;
+      }
+      //세로줄 검사
+      if(
+        rows[0][cellIndex].textContent === turn &&
+        rows[1][cellIndex].textContent === turn &&
+        rows[2][cellIndex].textContent === turn
+      ){
+        hasWinner = true;
+      }
+      //대각선줄 검사
+      if(
+        rows[0][0].textContent === turn &&
+        rows[1][1].textContent === turn &&
+        rows[2][2].textContent === turn
+      ){
+        hasWinner = true;
+      }
+      if(
+        rows[0][2].textContent === turn &&
+        rows[1][1].textContent === turn &&
+        rows[2][0].textContent === turn
+      ){
+        hasWinner = true;
+      }
+      
+      return hasWinner;
+    }
+
+    const checkWinnerAndDraw = (target) => {
+      const hasWinner = checkWinner(target);
+      // 승자가 있으면
+      if (hasWinner) {
+        $result.textContent = `${turn}님이 승리!`;
+        $table.removeEventListener('click', callback);
+        return;
+      }
+      // 승자가 없으면
+      const draw = rows.flat().every((cell) => cell.textContent);
+      if (draw) {
+        $result.textContent = '무승부';
+        return;
+      }
+      turn = turn === 'X' ? 'O' : 'X';
+    };
+
+    let clickable = true;
+    const callback = (event) => {
+      if(!clickable) return;
+      if (event.target.textContent !== '') { // 칸이 이미 채워져 있는가?
+        console.log('빈칸이 아닙니다.');
+        return;
+      }
+      // 빈칸이면
+      console.log('빈칸입니다');
+      event.target.textContent = turn;
+      checkWinnerAndDraw(event.target);
+      if (turn === 'X') {
+        const emptyCells = rows.flat().filter((v) => !v.textContent);
+        const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        clickable = false;
+        setTimeout(() => { 
+          randomCell.textContent = 'X';
+          checkWinnerAndDraw(randomCell);
+          clickable = true;
+        }, 1000);
+      }
+    };
+    
+    for(let i = 0; i < 3; i++){
+      const $tr = document.createElement('tr');
+      const cells = [];
+      for(let j = 0; j < 3; j++){
+        const $td = document.createElement('td');
+        cells.push($td);
+        $tr.append($td);
+      }
+      rows.push(cells);
+      $table.append($tr);
+    }
+    body.append($table);
+    body.append($result);
+    $table.addEventListener('click', callback);
+    document.querySelector('#container').append($table, $result);
+
+  </script>
+  <!-- <script>
+    // 반복문 만들 때는 줄이 먼저, 그 다음에 칸 만들기
+    //셀프체크 : 5(줄) * 4(칸) 이차원 배열을 만들어 보자. 배열의 요소는 모두 1로 만든다.
+    const { body } = document; 
+    const $container = document.querySelector('#container');
+    const $table = document.createElement('table');
+    const rows = [];
+
+    for(let i = 0; i < 5; i++){
+      const $tr = document.createElement('tr');
+      const cells = [];
+      for(let j = 0; j < 4; j++){
+        const $td = document.createElement('td');
+        $td.textContent = 1;
+        cells.push($td);
+        $tr.append($td);
+      }
+      rows.push(cells);
+      $table.append($tr);
+    }
+    console.log(rows);
+    body.append($table);
+
+
+  </script> -->
+  <!-- <script>
+    const array = [];
+    for(let i = 0; i < 5; i++){
+      const innerArray = [];
+      for(let j = 0; j < 4; j ++){
+        innerArray.push(1);
+      }
+      array.push(innerArray);
+    }
+
+    console.log(array);
+  </script> -->
+</body>
+</html>

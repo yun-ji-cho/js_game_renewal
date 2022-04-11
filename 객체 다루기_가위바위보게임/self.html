@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>객체 다루기 - 가위바위보 게임</title>
+  <style>
+    #computer{
+      height:168px;
+      width:200px;
+    }
+  </style>
+</head>
+<body>
+  <h1>객체 다루기 - 가위바위보 게임</h1>
+  <p>컴퓨터와 가위바위보를 해서 몇 번 이겼는지 점수를 기록한다. 이 게임을 통해 객체의 사용법을 익히고 타이머를 멈췄다가 재개하는 방법을 배운다.</p>
+  <h2>순서도 그리기</h2>
+  <p>가위바위보 게임의 순서도를 그린다. 빠르게 돌아가는 가위바위보 그림 아래에 위치한 가위, 바위, 보 버튼을 클릭해 컴퓨터와 승패를 가린다. 버튼을 누르면 승부를 표시하기 위해 1초동안 돌아가는 그림을 멈추게 한다. </p>
+  <div class="contents">
+    <div id="computer"></div>
+    <div>
+      <button id="scissors" class="btn">가위</button>
+      <button id="rock" class="btn">바위</button>
+      <button id="paper" class="btn">보</button>
+    </div>
+    <!-- <div id="score">0</div>
+    <div id="pcScore">0</div> -->
+    <div id="message"></div>
+  </div>
+  <script>
+    const $computer = document.querySelector('#computer');
+    const $scissors = document.querySelector('#scissors');
+    const $rock = document.querySelector('#rock');
+    const $paper = document.querySelector('#paper');
+    // const $score = document.querySelector('#score');
+    // const $pcScore = document.querySelector('#pcScore');
+    const $message = document.querySelector('#message');
+    const IMG_URL = './gawebawebo.png';
+  
+    const rspX = {
+      scissors : '0px', 
+      rock : '-200px', 
+      paper : '-400px', 
+    }
+
+    let computerChoice = 'scissors';
+
+    const changeComputerHand = () => {
+      if(computerChoice === 'scissors'){ 
+        computerChoice = 'rock';
+      }else if (computerChoice === 'rock') {
+        computerChoice = 'paper';
+      }else if (computerChoice === 'paper'){
+        computerChoice = 'scissors';
+      }
+      $computer.style.background = `url(${IMG_URL}) no-repeat ${rspX[computerChoice]} 0`;
+    }
+    let intervalid = setInterval(changeComputerHand, 50);
+
+    //가위 :1, 바위 :0, 보 : -1
+    //나  \ 컴퓨터  가위  바위  보
+    //가위          0     1   2
+    //바위         -1     0   1
+    //보          -2    -1   0
+
+    //승리 : 2, -1 / 패배 : 1, -2 / 무승부 : 0
+
+    const scoreTable = {
+      rock: 0,
+      scissors: 1,
+      paper: -1,
+    };
+
+
+    let clickable = true;
+    let score = 0;
+    let pcScore = 0;
+    const clickButton = (e) => {
+      if(clickable){
+        clearInterval(intervalid);
+        clickable = false;
+
+        const myChoice = e.target.textContent === '가위' 
+        ? 'scissors'
+        : e.target.textContent === '바위' 
+        ? 'rock' 
+        : 'paper';
+
+        const myScore = scoreTable[myChoice];
+        const computerScore = scoreTable[computerChoice];
+        const diff = myScore - computerScore;
+
+        let message;
+
+        if([-2, 1].includes(diff)){ //승리
+          score += 1;
+          message = '내가 승리';
+
+        }else if([-1, 2].includes(diff)){ //패배
+          pcScore += 1;
+          message = '컴터 승리';
+
+        }else{ 
+          message = '무승부';
+        }
+
+        if(score + pcScore < 5){
+          $message.textContent = `${message}, 내점수 : ${score}, 컴터점수 : ${pcScore} `;
+        }else{
+          const winner = score > pcScore ? '나' : 'pc'
+          $message.textContent = `마지막은 ${message}, 이로서 게임 종료!! ${winner} 승리~`;
+
+        }
+
+
+        setTimeout(() => {
+          clickable = true;
+          intervalid = setInterval(changeComputerHand, 50);
+        }, 1000);
+      }
+    }
+
+    $rock.addEventListener('click', clickButton);
+    $scissors.addEventListener('click', clickButton);
+    $paper.addEventListener('click', clickButton);
+
+
+    
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+</head>
+<body>
+  <h1>쿵쿵따 게임 만들기</h1>
+  <p>끝말잇기 게임을 응용해 쿵쿵따 게임을 만든다.</p>
+  <p>단어는 3글자, 3글자가 아니면 다시 입력하라고 표시한다.</p>
+  <p>prompt 함수를 사용해 몇명이 참가할지를 선택할때 사용자가 취소를 누르면 다음 코드가 실행 되지 않도록 처리하기</p>
+  <p>힌트 : 사용자가 input 이벤트를 발생시킬 때 입력한 글자가 세글자인지 확인한다.</p>
+  <br><br>
+  <p>[코드] 제시어가 비어있는가? OR (단어가 올바른가 AND 단어가 세 글자인가?)</p>
+  <p>number 값에 따라 if 문으로 나머지 코드를 감싸면 된다. prompt 함수에서 취소를 눌렀다면 값이 null 이 될것이고, 그 값이 Number 함수에 들어가면 NaN이 된다. Nan 은 if 문에 들어가면 항상 false로 취급되므로 number 가 null 이면 if 문 내부는 실행되지 않습니다.</p>
+  <dl>
+    <dt>판단문</dt>
+    <dd>1) 단어가 세 글자인가?</dd>
+    <dd>2) 제시어가 비었는가?</dd>
+    <dd>3) 입력한 단어가 올바른가?</dd>
+  </dl>
+
+  <div class="contents">
+    <div><span id="order">1</span>번째 참가자</div>
+    <div>제시어 : <span id="word"></span></div>
+    <input type="text">
+    <button>입력</button>
+  </div>
+
+  <script>
+    const num = Number(prompt('몇명이 참여하나요??'));
+    const $button = document.querySelector('button');
+    const $input = document.querySelector('input');
+    const $word = document.querySelector('#word');
+    const $order = document.querySelector('#order');
+    let word; //제시어
+    let newWord; //현재단어
+
+    if(num){
+
+      const onClickButton = () => {
+        if(newWord.length === 3 && (!word || newWord[0] === word[newWord.length - 1])){
+          word = newWord; //입력한 단어가 제시어가 된다.
+          $word.textContent = word; //화면에 제시어 표시
+          const order = Number($order.textContent);
+          if(order + 1 > num){
+            $order.textContent = 1;
+          }else{
+            $order.textContent = order + 1;
+          }
+        }else{
+          
+          if(newWord.length !== 3){
+            alert('다시 입력해주세요');
+          }else{
+            alert('틀렸습니다.');
+          }
+        }
+        $input.value = '';
+        $input.focus();
+      }
+      //이벤트 리스너에 넣는 함수에는 매개변수로 이벤트에 관한 정보가 제공된다.
+      const onInput = (event) => {
+        newWord = event.target.value;
+      }
+      $button.addEventListener('click', onClickButton);
+      $input.addEventListener('input', onInput);
+    }
+
+    
+
+
+  </script>
+  
+</body>
+</html>

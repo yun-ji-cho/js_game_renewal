@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    table{
+      border-collapse: collapse;
+    }
+    td{
+      border:1px solid black;
+      width:40px;
+      height:40px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>이차원 배열 다루기 - 틱택토 게임</h1>
+  <p>틱택토 게임은 오목의 축소판인 삼목이다. 삼목은 바둑판이 아니라 3*3 표 위에서 진행한다. 표와 같은 삼목 데이터는 자바스크립트에서 이차원 배열로 표현한다. 틱택토를 만들면서 이차원 배열로 데이터를 관리하고 배열 데이터를 HTML 화면에 그대로 표시하는 작업을 집중적으로 배워보자.
+  </p>
+  <h2>순서도 그리기</h2>
+  <p>바둑에 검은 돌과 흰 돌이 있듯이 틱택토에는 o 과 x 가 있다. 틱택토 순서도를 그려보자</p>
+
+  <div id="container">
+
+  </div>
+  <script>
+    const $container = document.querySelector('#container');
+    const tableElem = document.createElement('tabel');
+
+    const data = [];
+
+
+    for(let i = 0; i < 3; i++){
+      data.push([]);
+    }
+
+    const $table = document.createElement('table');
+
+
+    console.log(data);
+    document.body.append(document.createElem('table'));
+
+  </script>
+</body>
+</html>

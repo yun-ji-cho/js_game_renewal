@@ -1,0 +1,153 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>텍스트 RPG</title>
+</head>
+
+<body>
+  <h1>10장 클래스_텍스트 RPG 게임 만들기</h1>
+  <p>이 장에서는 텍스트 RPG 게임을 만들어 보며 클래스 문법을 배우는 시간을 갖는다. 그래픽을 다루기에는 아직 실력이 부족하므로 텍스트로만 진행하는 RPG를 만든다. 주인공과 몬스터, 보스가 나오고, 레벨업도 하는 체계적인 게임이다.
+  </p>
+
+  <h2>순서도 그리기</h2>
+  <p>게임에는 크게 두가지 모드가 있다. 모험, 휴식, 종료 중에서 선택하는 일반모드와 모험을 떠나서 적을 만나게 될 때 돌입하는 전투모드이다. 전투모드에서는 적을 공격하거나 체력을 회복하거나 도망간다. 내용에 맞춰 RPG 의 순서도를 그려본다.</p>
+  <form id="start-screen">
+    <input id="name-input" placeholder="주인공 이름을 입력하세요!" />
+    <button id="start">시작</button>
+  </form>
+  <div id="screen">
+    <!-- 주인공의 스텝들 -->
+    <div id="hero-stat">
+      <span id="hero-name"></span>
+      <span id="hero-level"></span>
+      <span id="hero-hp"></span>
+      <span id="hero-xp"></span>
+      <span id="hero-att"></span>
+    </div>
+    <!-- 일반모드  -->
+    <form id="game-menu" style="display: none;">
+      <div id="menu-1">1.모험</div>
+      <div id="menu-2">2.휴식</div>
+      <div id="menu-3">3.종료</div>
+      <input id="menu-input" />
+      <button id="menu-button">입력</button>
+    </form>
+    <!-- 전투모드  -->
+    <form id="battle-menu" style="display: none;">
+      <div id="battle-1">1.공격</div>
+      <div id="battle-2">2.회복</div>
+      <div id="battle-3">3.도망</div>
+      <input id="battle-input" />
+      <button id="battle-button">입력</button>
+    </form>
+    <!-- 적의 정보 -->
+    <div id="message"></div>
+    <div id="monster-stat">
+      <span id="monster-name"></span>
+      <span id="monster-hp"></span>
+      <span id="monster-att"></span>
+    </div>
+  </div>
+
+  <script>
+    const $startScreen = document.querySelector('#start-screen');
+    const $gameMenu = document.querySelector('#game-menu');
+    const $battleMenu = document.querySelector('#battle-menu');
+    const $heroName = document.querySelector('#hero-name');
+    const $heroLevel = document.querySelector('#hero-level');
+    const $heroHp = document.querySelector('#hero-hp');
+    const $heroXp = document.querySelector('#hero-xp');
+    const $heroAtt = document.querySelector('#hero-att');
+    const $monsterName = document.querySelector('#monster-name');
+    const $monsterHp = document.querySelector('#monster-hp');
+    const $monsterAtt = document.querySelector('#monster-att');
+    const $message = document.querySelector('#message');
+    
+    const hero = {
+      name : '',
+      lev : 1,
+      maxHp : 100,
+      hp : 10,
+      xp : 0,
+      att : 10,
+      attack(monster){
+        monster.hp -= this.att; //this 는 메서드 안에서는 그 객체를 가리킴. 화살표함수일 경우는 window
+        this.hp -= monster.att;
+      },
+      heal(monster){
+        this.hp += 20;
+        this.hp -= monster.att;
+      }
+    };
+    
+    let monster = null;
+    const monsterList = [
+      {name : '슬라임', hp : 25, att : 10, xp : 10},
+      {name : '스켈레톤', hp : 50, att : 15, xp : 20},
+      {name : '마왕', hp : 150, att : 35, xp : 50},
+    ];
+    
+    console.log($startScreen);
+    
+    $startScreen.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = e.target['name-input'].value;
+      if(name === '') return;
+      $startScreen.style.display = 'none';
+      $gameMenu.style.display = 'block';
+      $heroName.textContent = name;
+      $heroLevel.textContent = `${hero.lev}Lev`;
+      $heroHp.textContent = `HP : ${hero.hp}/${hero.maxHp}`;
+      $heroXp.textContent = `HP : ${hero.hp}/${15 * hero.lev}`;
+      $heroAtt.textContent = `ATT : ${hero.att}`
+      hero.name = name;
+    });
+    
+    $gameMenu.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = e.target['menu-input'].value;
+      if(input === '1'){ //모험
+        $gameMenu.style.display = 'none';
+        $battleMenu.style.display = 'block';
+        monster = JSON.parse(
+          JSON.stringify(monsterList[Math.floor(Math.random() * monsterList.length)])
+        );
+        monster.maxHp = monster.hp;
+        $monsterName.textContent = monster.name;
+        $monsterHp.textContent = `HP : ${monster.hp} / ${monster.Hp}`;
+        $monsterAtt.textContent = `ATT : ${monster.att}`;
+    
+        const monster1 = JSON.parse(JSON.stringify(monsterList[0])); //깊은 복사
+        const monster2 = monsterList[0]; //객체를 참조
+        monster1.name = '새 몬스터';
+        console.log(monsterList[0].name); //슬라임
+        monster2.name = '새 몬스터';
+        console.log(monsterList[0].name); //새 몬스터
+        console.log(monsterList[0] === monster1); //false
+        console.log(monsterList[0] === monster2); //true,
+      
+      } else if(input === '2'){ //휴식
+    
+      } else if(input === '3') { //종료
+    
+      }
+    });
+    
+    $battleMenu.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = e.target['battle-input'].value;
+      if(input === '1'){ //공격
+        hero.attact(monster);
+        monster.attact(hero);
+      } else if(input === '2'){ //회복
+    
+      } else if(input === '3') { //도망
+    
+      }
+    });
+    
+    //찍어내거나 상호작용이 원활하게 이루어져야 하는 경우는 Class 를 이용한는 것이 좋다.
+  </script>
+</body>
+</html>

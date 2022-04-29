@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>짝 맞추기 - 이벤트 루프</title>
+  <style>
+    #wrapper{
+      width: 400px;
+      pointer-events: none;
+    }
+    .card {
+      display: inline-block;
+      margin-right: 20px;
+      margin-bottom: 20px;
+      width: 70px;
+      height: 100px;
+      perspective: 140px;
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+    }
+
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front {
+      background: navy;
+    }
+
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 1px solid black;
+      backface-visibility: hidden;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+    }
+  </style>
+</head>
+<body>
+<div id="wrapper"></div>
+<script>
+  const $wrapper = document.querySelector('#wrapper');
+
+  const total = 12;
+  const colors = ['red', 'orange', 'yellow', 'green', 'white', 'pink'];
+  let colorCopy = colors.concat(colors);
+  let shuffled = [];
+
+  function shuffle(){ //피쳐 예이츠 셔플
+    for(let i = 0; colorCopy.length > 0; i++){
+      const randomIndex = Math.floor(Math.random() * colorCopy.length);
+      shuffled = shuffled.concat(colorCopy.splice(randomIndex, 1));
+      //concat 은 배열 하나정도는 풀어서 해친다. 객체는 풀지 않음
+    }
+  }
+
+  function createCard(i){
+    const card = document.createElement('div');
+    card.className = 'card'; //card 태그 생성
+    const cardInner = document.createElement('div');
+    cardInner.className = 'card-inner';
+    const cardFront = document.createElement('div');
+    cardFront.className = 'card-front';
+    const cardBack= document.createElement('div');
+    cardBack.className = 'card-back';
+    cardBack.style.backgroundColor = shuffled[i];
+    cardInner.appendChild(cardFront);
+    cardInner.appendChild(cardBack);
+    card.appendChild(cardInner);
+    return card;
+  }
+
+  let clickCardArr = [];
+  let matchCardArr = [];
+
+  function onClickCard(e){
+    console.log(e.target);
+    if(!e.target.classList.contains('card-front')) return;
+    const $card = e.target.closest('.card');
+    const $cardBack = e.target.nextSibling;
+    
+    if(clickCardArr.length < 2){
+      $card.classList.add('flipped');
+      clickCardArr.push($cardBack);
+    }else{
+      return;
+    }
+
+    if(clickCardArr.length >= 2) {
+      if(clickCardArr[0].style.backgroundColor === clickCardArr[1].style.backgroundColor){ //맞춤
+        matchCardArr.push(clickCardArr[0], clickCardArr[1]);
+        clickCardArr = [];
+        if(matchCardArr.length === 12){
+          setTimeout(function(){
+            alert('축하합니다 모두 맞췄습니다.');
+          },1000)
+        }
+      }else { //틀림
+        setTimeout(function(){
+          console.log(clickCardArr);
+          clickCardArr.forEach((item) => {
+            item.closest('.card').classList.remove('flipped');
+          });
+          clickCardArr = [];    
+        }, 1000);
+      }
+    }
+  };
+
+  function startGame(){
+    shuffle();
+    for(let i = 0; i < total; i += 1){
+      const card = createCard(i);
+      $wrapper.appendChild(card);
+    }
+
+    document.querySelectorAll('.card').forEach((card, index) => {
+      setTimeout(() => {
+        card.classList.add('flipped');
+      }, 1000 + 100 * index);
+    });
+
+    setTimeout(() => {
+      document.querySelectorAll('.card').forEach((card) => {
+        card.classList.remove('flipped');
+      })
+      document.querySelector('#wrapper').classList.add('start');
+    }, 4000);
+
+    const wrapper = document.querySelector('#wrapper');
+    wrapper.addEventListener('click', onClickCard);
+
+
+  }
+
+  startGame();
+
+
+
+
+
+
+</script>
+</body>
+</html>
